@@ -1,0 +1,69 @@
+body {
+  font-family: sans-serif;
+  background: #f5f6fa;
+  text-align: center;
+}
+
+.title {
+  margin-top: 50px;
+}
+
+.player-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.player-inputs input {
+  padding: 10px;
+  border-radius: 8px;
+  width: 300px;
+}
+
+.btn {
+  padding: 10px;
+  height: 50px;
+  border-radius: 8px;
+}
+
+.start {
+  background-color: greenyellow;
+}
+.res {
+  background-color: pink;
+  margin-bottom: 30px;
+  margin-top: 10px;
+  display: none;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  gap: 5px;
+  justify-content: center;
+  margin: 30px auto;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  background: #fff;
+  border: 2px solid #444;
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cell {
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+
+.message {
+  font-size: 1.5rem;
+}
