@@ -8,6 +8,11 @@ function Cell() {
   return { addMark, getValue };
 }
 
+// Factory function cho người chơi
+function Player(name, mark) {
+  return { name, mark };
+}
+
 // Module quản lý bàn cờ (3x3)
 const Gameboard = (function () {
   const size = 3; //Size bàn cờ
@@ -34,11 +39,6 @@ const Gameboard = (function () {
   return { getBoard, addMark, printBoard, resetBoard };
 })();
 
-// Factory function cho người chơi
-function Player(name, mark) {
-  return { name, mark };
-}
-
 // Module điều khiển luật game, flow game
 const GameController = (function () {
   let players = [Player("Player 1", "X"), Player("Player 2", "O")];
@@ -59,7 +59,7 @@ const GameController = (function () {
   const isWin = () => {
     const grid = Gameboard.getBoard().map((row) => row.map((cell) => cell.getValue()));
     for (let i = 0; i < 3; i++) {
-      if (grid[i][0] && grid[i][0] === grid[i][1] && grid[i][1] === grid[i][2]) return true; // row
+      if (grid[i][0] && grid[i][0] === grid[i][1] && grid[i][1] === grid[i][2]) return true; // row //grid[i][0] && grid[i][0] kiểm tra truthy (hàng 1 = hàng 2 = hàng 3)
       if (grid[0][i] && grid[0][i] === grid[1][i] && grid[1][i] === grid[2][i]) return true; // col
     }
     if (grid[0][0] && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) return true;
@@ -68,10 +68,10 @@ const GameController = (function () {
   };
   // Kiểm tra hòa
   const checkTie = () => {
-    const grid = Gameboard.getBoard()
-      .flat()
-      .map((cell) => cell.getValue());
-    return grid.every((value) => value !== "");
+    const grid = Gameboard.getBoard() //lấy mảng 2d
+      .flat() //chuyển mảng thành hàng ngang "","","",...
+      .map((cell) => cell.getValue()); //lọc giá trị trong từng cell
+    return grid.every((value) => value !== ""); //đảm bảo value của cell ko rỗng
   };
   // Xử lý 1 lượt chơi
   const playRound = (row, col) => {
@@ -88,7 +88,7 @@ const GameController = (function () {
       return { tie: true };
     }
     // Chuyển lượt
-    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    activePlayer = activePlayer === players[0] ? players[1] : players[0]; // gán giá trị ng chơi lượt mới cho activePlayer
     return { next: true, player: activePlayer };
   };
   // Reset game
@@ -117,7 +117,7 @@ const DisplayController = (function () {
       for (let j = 0; j < 3; j++) {
         const cellElem = document.createElement("div");
         cellElem.classList.add("cell");
-        cellElem.textContent = board[i][j].getValue();
+        cellElem.textContent = board[i][j].getValue(); // "X" or "O"
         cellElem.dataset.row = i;
         cellElem.dataset.col = j;
         // Gắn sự kiện click vào từng ô
@@ -125,17 +125,20 @@ const DisplayController = (function () {
           const result = GameController.playRound(i, j);
           render(); // cập nhật lại giao diện
           // Xử lý thông báo/thắng/thua
-          if (result && result.taken) showMessage("Ô này đã được đánh!");
+          if (result && result.taken) showMessage("The cell has been marked!");
           else if (result && result.win) {
-            showMessage(`${result.player.name} (${result.player.mark}) thắng!`);
+            showMessage(`${result.player.name} (${result.player.mark}) Win!`);
             restartBtn.style.display = "inline-block";
           } else if (result && result.tie) {
-            showMessage("Hòa nhau!");
+            showMessage("Tie!");
             restartBtn.style.display = "inline-block";
           } else if (!GameController.isGameOver()) {
             showMessage(
               `${GameController.getActivePlayer().name} (${GameController.getActivePlayer().mark}) đến lượt!`
             );
+          } else if (result && result.over) {
+            showMessage("GameOver. Press restart to replay!");
+            return;
           }
         });
         boardElem.appendChild(cellElem);
@@ -144,6 +147,7 @@ const DisplayController = (function () {
   function showMessage(msg) {
     messageElem.textContent = msg;
   }
+
   restartBtn.addEventListener("click", () => {
     GameController.restart();
     render();
@@ -151,17 +155,18 @@ const DisplayController = (function () {
     restartBtn.style.display = "none";
     playerInput.style.display = "flex";
   });
+
   startBtn.addEventListener("click", () => {
     const name1 = document.querySelector(".player-1").value || "Player 1";
     const name2 = document.querySelector(".player-2").value || "Player 2";
     GameController.setPlayers(name1, name2);
     GameController.restart();
     render();
-    showMessage(`${name1} (X) bắt đầu!`);
+    showMessage(`${name1} (X) First Move!`);
     restartBtn.style.display = "none";
     playerInput.style.display = "none";
   });
   // Hiện bàn cờ rỗng khi load trang
   //   render();
-  showMessage("Nhập tên rồi nhấn Start để chơi!");
+  showMessage("Input name then press Play to start game!");
 })();
