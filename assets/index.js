@@ -133,11 +133,9 @@ const DisplayController = (function () {
             showMessage("Tie!");
             restartBtn.style.display = "inline-block";
           } else if (!GameController.isGameOver()) {
-            showMessage(
-              `${GameController.getActivePlayer().name} (${GameController.getActivePlayer().mark}) đến lượt!`
-            );
+            showMessage(`${GameController.getActivePlayer().name} (${GameController.getActivePlayer().mark}) turn!`);
           } else if (result && result.over) {
-            showMessage("GameOver. Press restart to replay!");
+            showMessage("Game Over! Press restart to replay!");
             return;
           }
         });
@@ -151,7 +149,7 @@ const DisplayController = (function () {
   restartBtn.addEventListener("click", () => {
     GameController.restart();
     render();
-    showMessage(`${GameController.getActivePlayer().name} (${GameController.getActivePlayer().mark}) bắt đầu!`);
+    showMessage(`${GameController.getActivePlayer().name} (${GameController.getActivePlayer().mark}) start!`);
     restartBtn.style.display = "none";
     playerInput.style.display = "flex";
   });
